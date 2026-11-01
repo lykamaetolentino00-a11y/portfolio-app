@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+@import './tolentino.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/* Dark mode is switched by adding the "dark" class on <html> (like the original portfolio) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+
+    --color-canvas: rgb(var(--canvas));
+    --color-frame: rgb(var(--frame));
+    --color-subtle: rgb(var(--subtle));
+    --color-line: rgb(var(--line));
+    --color-ink: rgb(var(--ink));
+    --color-muted: rgb(var(--muted));
+    --color-brand: rgb(var(--brand));
+    --color-warm: rgb(var(--warm));
+}

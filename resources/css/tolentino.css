@@ -1,0 +1,455 @@
+/* =====================================================================
+   Tolentino portfolio styles (ported from css/style.css)
+   - Everything is inside @layer components so Tailwind utility classes
+     (like md:hidden) can still override these component classes.
+   - The theme variables and page background live on .tolentino, so the
+     other portfolio (Bulwag) cannot clash with them.
+   ===================================================================== */
+@layer components {
+/* =====================================================================
+   Lyka Tolentino · Portfolio styles
+   Idea: the whole page is a Figma-style canvas. Content sits in white
+   "frames", and things get selection handles (little squares) like in Figma.
+   Tailwind handles layout/spacing; this file holds the theme + custom pieces.
+   ===================================================================== */
+
+/* ---------- 1. Design tokens (RGB triplets so Tailwind can add opacity) ---------- */
+.tolentino {
+  --canvas: 235 231 245;   /* lavender-gray canvas */
+  --frame: 255 255 255;    /* white frames */
+  --subtle: 245 242 251;
+  --line: 212 204 232;
+  --ink: 26 19 48;
+  --muted: 90 80 117;
+  --brand: 109 40 217;     /* selection violet */
+  --onbrand: 255 255 255;
+  --warm: 194 65 12;       /* Inspect Mode annotation */
+  --onwarm: 255 255 255;
+  --danger: 190 18 60;
+  color-scheme: light;
+}
+
+.dark .tolentino {
+  --canvas: 30 22 51;
+  --frame: 42 32 68;
+  --subtle: 37 28 61;
+  --line: 62 50 96;
+  --ink: 243 239 250;
+  --muted: 189 179 212;
+  --brand: 183 148 255;
+  --onbrand: 30 22 51;
+  --warm: 255 179 138;
+  --onwarm: 30 22 51;
+  --danger: 255 138 155;
+  color-scheme: dark;
+}
+
+/* ---------- 2. Base ---------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* so the fixed nav doesn't cover section titles */
+}
+
+.tolentino {
+  background-color: rgb(var(--canvas));
+  /* FigJam-style dot grid */
+  background-image: radial-gradient(rgb(var(--ink) / 0.09) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: rgb(var(--ink));
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Always keep the HTML "hidden" attribute working, even on flex/grid elements */
+[hidden] { display: none !important; }
+
+.tolentino :focus-visible {
+  outline: 2px solid rgb(var(--brand));
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: rgb(var(--brand));
+  color: rgb(var(--onbrand));
+  font-weight: 600;
+}
+.skip-link:focus { top: 1rem; }
+
+/* ---------- 3. Navigation ---------- */
+.site-nav {
+  background: rgb(var(--canvas) / 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgb(var(--line));
+}
+
+.nav-link {
+  position: relative;
+  padding: 0.25rem 0;
+  font-weight: 500;
+  color: rgb(var(--muted));
+  transition: color 0.2s;
+}
+.nav-link:hover { color: rgb(var(--ink)); }
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 2px;
+  background: rgb(var(--brand));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-link[aria-current='true'] { color: rgb(var(--brand)); }
+.nav-link[aria-current='true']::after,
+.nav-link:hover::after { transform: scaleX(1); }
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: rgb(var(--muted));
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+}
+.icon-btn:hover { color: rgb(var(--ink)); background: rgb(var(--subtle)); }
+.icon-btn[aria-pressed='true'] {
+  color: rgb(var(--brand));
+  border-color: rgb(var(--brand));
+  background: rgb(var(--brand) / 0.1);
+}
+
+/* Mobile menu: slides open, and is truly hidden (not focusable) when closed */
+#mobile-menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.3s ease, visibility 0.3s;
+}
+#mobile-menu.open { grid-template-rows: 1fr; visibility: visible; }
+#mobile-menu > div { overflow: hidden; }
+
+.mobile-link {
+  display: block;
+  padding: 0.7rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  color: rgb(var(--muted));
+}
+.mobile-link:hover { background: rgb(var(--subtle)); color: rgb(var(--ink)); }
+.mobile-link[aria-current='true'] { color: rgb(var(--brand)); background: rgb(var(--brand) / 0.1); }
+
+/* ---------- 4. Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1.5px solid transparent;
+  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: rgb(var(--brand)); color: rgb(var(--onbrand)); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-ghost { border-color: rgb(var(--brand)); color: rgb(var(--brand)); }
+.btn-ghost:hover { background: rgb(var(--brand) / 0.1); }
+
+/* ---------- 5. Figma-style selection box + handles (the signature idea) ---------- */
+.handle {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: rgb(var(--frame));
+  border: 1.5px solid rgb(var(--brand));
+  border-radius: 1px;
+  z-index: 2;
+}
+.handle-tl { top: -5.5px; left: -5.5px; }
+.handle-tr { top: -5.5px; right: -5.5px; }
+.handle-bl { bottom: -5.5px; left: -5.5px; }
+.handle-br { bottom: -5.5px; right: -5.5px; }
+
+/* The hero heading is "selected" like a text layer in Figma */
+.selection {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid rgb(var(--brand));
+  animation: selectIn 0.4s ease 0.2s both;
+}
+.selection .handle { animation: pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.5) both; }
+.selection .handle-tl { animation-delay: 0.5s; }
+.selection .handle-tr { animation-delay: 0.6s; }
+.selection .handle-br { animation-delay: 0.7s; }
+.selection .handle-bl { animation-delay: 0.8s; }
+
+@keyframes selectIn { from { border-color: transparent; } }
+@keyframes pop { from { transform: scale(0); opacity: 0; } }
+
+/* Avatar frame (About) keeps its handles always visible */
+.avatar-frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid rgb(var(--brand));
+  background: rgb(var(--frame));
+}
+.monogram {
+  font-family: Syne, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(4rem, 12vw, 6rem);
+  line-height: 1;
+  color: rgb(var(--brand));
+}
+
+/* ---------- 6. Layers panel (hero) ---------- */
+.panel {
+  background: rgb(var(--frame));
+  border: 1px solid rgb(var(--line));
+  border-radius: 6px;
+  animation: fadeIn 0.6s ease 0.3s both;
+}
+.layer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  animation: rowIn 0.5s ease both;
+  animation-delay: calc(0.9s + var(--i, 0) * 0.12s);
+}
+.layer-row:hover { background: rgb(var(--brand) / 0.08); }
+.layer-row.is-selected {
+  background: rgb(var(--brand) / 0.14);
+  box-shadow: inset 3px 0 0 rgb(var(--brand));
+}
+.layer-child { padding-left: 2.25rem; }
+
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes rowIn { from { opacity: 0; transform: translateX(12px); } }
+
+/* ---------- 7. Skills (rows in a properties-panel style) ---------- */
+.skill-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem 1rem;
+  border-top: 1px solid rgb(var(--line));
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.skill-row:hover { background: rgb(var(--subtle)); }
+
+.icon-tile {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 6px;
+  background: rgb(var(--brand) / 0.12);
+  color: rgb(var(--brand));
+  font-size: 1.3rem;
+}
+
+/* ---------- 8. About facts ---------- */
+.fact {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid rgb(var(--line));
+}
+.fact dd { overflow-wrap: anywhere; }
+
+/* ---------- 9. Project frames ---------- */
+.frame-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: rgb(var(--frame));
+  border: 1px solid rgb(var(--line));
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+.frame-card:hover,
+.frame-card:focus-within { border-color: rgb(var(--brand)); }
+
+/* handles only appear when you hover/focus a frame, like selecting it in Figma */
+.frame-card .handle { opacity: 0; transition: opacity 0.15s; }
+.frame-card:hover .handle,
+.frame-card:focus-within .handle { opacity: 1; }
+
+.project-visual {
+  height: 11rem;
+  display: grid;
+  place-items: center;
+  background: rgb(var(--subtle));
+  border-radius: 3px 3px 0 0;
+  overflow: hidden;
+}
+.project-visual svg { width: 100%; height: 100%; }
+
+/* Tiny illustrations (inline SVG) use theme colors */
+.sv-line { stroke: rgb(var(--brand)); stroke-width: 2; }
+.sv-frame { fill: rgb(var(--frame)); }
+.sv-brand { fill: rgb(var(--brand)); }
+.sv-mid { fill: rgb(var(--brand) / 0.55); }
+.sv-soft { fill: rgb(var(--brand) / 0.22); }
+.sv-muted { fill: rgb(var(--muted) / 0.4); }
+.sv-warm { fill: rgb(var(--warm)); }
+.sv-warm-line { fill: none; stroke: rgb(var(--warm)); stroke-width: 2; }
+
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgb(var(--line));
+  border-radius: 4px;
+  background: rgb(var(--subtle));
+  color: rgb(var(--muted));
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.link-btn {
+  font-weight: 700;
+  color: rgb(var(--brand));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+}
+.link-btn:hover { text-decoration-thickness: 3px; }
+
+/* Filter = segmented control */
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  background: rgb(var(--frame));
+  border: 1px solid rgb(var(--line));
+  border-radius: 8px;
+}
+.filter-btn {
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgb(var(--muted));
+  transition: background-color 0.2s, color 0.2s;
+}
+.filter-btn:hover { color: rgb(var(--ink)); }
+.filter-btn[aria-pressed='true'] { background: rgb(var(--brand)); color: rgb(var(--onbrand)); }
+
+/* ---------- 10. Education timeline (plain rows, no cards) ---------- */
+.entry {
+  display: grid;
+  gap: 0.5rem 2rem;
+  padding: 1.75rem 0;
+  border-top: 1px solid rgb(var(--line));
+}
+
+/* ---------- 11. Contact ---------- */
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid rgb(var(--line));
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.contact-row:hover { background: rgb(var(--frame)); }
+
+.form-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgb(var(--subtle));
+  border: 1.5px solid rgb(var(--muted) / 0.8);
+  border-radius: 8px;
+  color: rgb(var(--ink));
+  font: inherit;
+  transition: border-color 0.2s;
+}
+.field::placeholder { color: rgb(var(--muted)); opacity: 0.85; }
+.field:focus-visible { outline: 2px solid rgb(var(--brand)); outline-offset: 2px; border-color: rgb(var(--brand)); }
+.field[aria-invalid='true'] { border-color: rgb(var(--danger)); }
+.field-error {
+  margin-top: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgb(var(--danger));
+}
+
+/* ---------- 12. Project dialog (native <dialog>) ---------- */
+.tolentino dialog {
+  margin: auto;
+  width: min(40rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  padding: 0;
+  overflow: auto;
+  background: rgb(var(--frame));
+  color: rgb(var(--ink));
+  border: 1px solid rgb(var(--line));
+  border-radius: 6px;
+}
+.tolentino dialog::backdrop { background: rgb(10 6 20 / 0.6); }
+.tolentino dialog[open] { animation: dialogIn 0.2s ease; }
+@keyframes dialogIn { from { opacity: 0; transform: scale(0.97); } }
+html.modal-open { overflow: hidden; }
+.dialog-visual { height: 14rem; background: rgb(var(--subtle)); }
+.dialog-visual svg { width: 100%; height: 100%; }
+
+/* ---------- 13. Inspect Mode (my own feature) ---------- */
+html.inspect .tolentino { cursor: crosshair; }
+.inspect-target {
+  outline: 2px dashed rgb(var(--warm));
+  outline-offset: 3px;
+}
+#inspect-tip {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  background: rgb(var(--warm));
+  color: rgb(var(--onwarm));
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ---------- 14. Respect "reduce motion" ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+}
