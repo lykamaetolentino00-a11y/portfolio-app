@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 // Add or remove links here. The "href" must match a section id on the page.
@@ -96,6 +97,12 @@ export default function Navbar() {
                                 </a>
                             </li>
                         ))}
+                        {/* Link to the other portfolio in this app */}
+                        <li>
+                            <Link href="/bulwag" className="nav-link">
+                                Bulwag
+                            </Link>
+                        </li>
                     </ul>
 
                     <div className="flex items-center gap-1">
@@ -159,6 +166,11 @@ export default function Navbar() {
                                     </a>
                                 </li>
                             ))}
+                            <li>
+                                <Link href="/bulwag" className="mobile-link">
+                                    Bulwag
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </div>
