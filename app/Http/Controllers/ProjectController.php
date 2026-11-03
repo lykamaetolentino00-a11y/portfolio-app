@@ -132,6 +132,7 @@ class ProjectController extends Controller
             'image.image' => 'The file must be an image.',
             'image.mimes' => 'Only JPG, PNG, or WEBP images are allowed.',
             'image.max' => 'The image must not be larger than 2 MB.',
+            'image.uploaded' => 'The image must not be larger than 2 MB.',
             'date_completed.before_or_equal' => 'The completion date cannot be in the future.',
         ];
     }
